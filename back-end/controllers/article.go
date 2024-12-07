@@ -6,13 +6,14 @@ import (
 	"exchangeapp/models"
 	"fmt"
 	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/gin-gonic/gin"
 )
 
-var allCacheKey = "articles"
-var oneCacheKey = "articles:%d"
+var allCacheKey string = "articles"
+var oneCacheKey string = "articles:%d"
 
 func CreateArticle(ctx *gin.Context) {
 	var article models.Article
@@ -47,11 +48,11 @@ func CreateArticle(ctx *gin.Context) {
 }
 
 func GetArticles(ctx *gin.Context) {
+	var articles []models.Article
 	redisData, err := global.RDB.Get(ctx, allCacheKey).Result()
 	if err == nil && redisData != "" {
 		// redis 缓存命中
 		fmt.Println("Redis get data!")
-		var articles []models.Article
 		// 将 JSON 字符串反序列化为文章列表
 		err := json.Unmarshal([]byte(redisData), &articles)
 		if err != nil {
@@ -63,7 +64,6 @@ func GetArticles(ctx *gin.Context) {
 	} else if err != nil {
 		// redis 缓存未命中, 从数据库获取数据并缓存
 		fmt.Println("Redis not found:", err)
-		var articles []models.Article
 		result := global.DB.Find(&articles, "deleted_at IS NULL")
 		if result.Error != nil {
 			ctx.JSON(http.StatusNotFound, gin.H{"error": "Articles not found"})
@@ -85,20 +85,59 @@ func GetArticles(ctx *gin.Context) {
 		return
 	} else {
 		// redis 报错
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 }
 
 func GetArticle(ctx *gin.Context) {
 	var article models.Article
-	id := ctx.Param("id")
-	result := global.DB.First(&article, "id = ?", id)
-	if result.Error != nil {
-		ctx.JSON(http.StatusNotFound, gin.H{"error": "Article not found"})
+	id_str := ctx.Param("id")
+	id_num, err := strconv.Atoi(id_str)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	ctx.JSON(http.StatusOK, article)
+	cacheKey := fmt.Sprintf(oneCacheKey, id_num)
+	redisData, err := global.RDB.Get(ctx, cacheKey).Result()
+	if err == nil && redisData != "" {
+		// redis 缓存命中
+		fmt.Println("Redis get data!")
+		// 将 JSON 字符串反序列化为文章
+		err := json.Unmarshal([]byte(redisData), &article)
+		if err != nil {
+			ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to unmarshal articles from cache"})
+			return
+		}
+		ctx.JSON(http.StatusOK, article)
+		return
+	} else if err != nil {
+		// redis 缓存未命中, 从数据库获取数据并缓存
+		fmt.Println("Redis not found:", err.Error())
+		result := global.DB.First(&article, "id = ?", id_num)
+		if result.Error != nil {
+			ctx.JSON(http.StatusNotFound, gin.H{"error": "Articles not found"})
+			return
+		}
+		// 将文章序列化为 JSON 字符串
+		jsonData, err := json.Marshal(article)
+		if err != nil {
+			ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to marshal articles"})
+			return
+		}
+		// 将 JSON 字符串存储到 Redis 中
+		statusCmd := global.RDB.Set(ctx, fmt.Sprintf(oneCacheKey, article.ID), jsonData, time.Hour*24)
+		if statusCmd.Err() != nil {
+			ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to set cache in Redis"})
+			return
+		}
+		ctx.JSON(http.StatusOK, article)
+		return
+	} else {
+		// redis 报错
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err})
+		return
+	}
 }
 
 func DeleteArticle(ctx *gin.Context) {
