@@ -30,12 +30,12 @@ func Register(ctx *gin.Context) {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 	}
 
-	// if err := global.Db.AutoMigrate(&user); err != nil {
+	// if err := global.DB.AutoMigrate(&user); err != nil {
 	// 	ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 	// 	return
 	// }
 
-	if err := global.Db.Create(&user).Error; err != nil {
+	if err := global.DB.Create(&user).Error; err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
@@ -54,7 +54,7 @@ func Login(ctx *gin.Context) {
 	}
 
 	var user models.User
-	if err := global.Db.Where("username = ?", input_user.Username).Find(&user).Error; err != nil {
+	if err := global.DB.Where("username = ?", input_user.Username).Find(&user).Error; err != nil {
 		ctx.JSON(http.StatusUnauthorized, gin.H{"error": "User or password is incorrect"})
 		return
 	}

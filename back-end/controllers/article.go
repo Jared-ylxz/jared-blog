@@ -25,7 +25,7 @@ func CreateArticle(ctx *gin.Context) {
 	if exists {
 		username := any_username.(string)
 		var user models.User
-		result := global.Db.First(&user, "username = ?", username)
+		result := global.DB.First(&user, "username = ?", username)
 		if result.Error != nil {
 			ctx.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
 			return
@@ -33,7 +33,7 @@ func CreateArticle(ctx *gin.Context) {
 		article.AuthorID = user.ID
 	}
 
-	err := global.Db.Create(&article).Error
+	err := global.DB.Create(&article).Error
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -41,13 +41,13 @@ func CreateArticle(ctx *gin.Context) {
 
 	ctx.JSON(http.StatusCreated, article)
 
-	if err := global.RedisClient.Del(ctx, allCacheKey).Err(); err != nil {
+	if err := global.RDB.Del(ctx, allCacheKey).Err(); err != nil {
 		fmt.Println("Redis delete error:", err)
 	}
 }
 
 func GetArticles(ctx *gin.Context) {
-	redisData, err := global.RedisClient.Get(ctx, allCacheKey).Result()
+	redisData, err := global.RDB.Get(ctx, allCacheKey).Result()
 	if err == nil && redisData != "" {
 		// redis 缓存命中
 		fmt.Println("Redis get data!")
@@ -64,7 +64,7 @@ func GetArticles(ctx *gin.Context) {
 		// redis 缓存未命中, 从数据库获取数据并缓存
 		fmt.Println("Redis not found:", err)
 		var articles []models.Article
-		result := global.Db.Find(&articles, "deleted_at IS NULL")
+		result := global.DB.Find(&articles, "deleted_at IS NULL")
 		if result.Error != nil {
 			ctx.JSON(http.StatusNotFound, gin.H{"error": "Articles not found"})
 			return
@@ -76,7 +76,7 @@ func GetArticles(ctx *gin.Context) {
 			return
 		}
 		// 将 JSON 字符串存储到 Redis 中
-		statusCmd := global.RedisClient.Set(ctx, allCacheKey, jsonData, time.Hour*24)
+		statusCmd := global.RDB.Set(ctx, allCacheKey, jsonData, time.Hour*24)
 		if statusCmd.Err() != nil {
 			ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to set cache in Redis"})
 			return
@@ -93,7 +93,7 @@ func GetArticles(ctx *gin.Context) {
 func GetArticle(ctx *gin.Context) {
 	var article models.Article
 	id := ctx.Param("id")
-	result := global.Db.First(&article, "id = ?", id)
+	result := global.DB.First(&article, "id = ?", id)
 	if result.Error != nil {
 		ctx.JSON(http.StatusNotFound, gin.H{"error": "Article not found"})
 		return
@@ -104,15 +104,15 @@ func GetArticle(ctx *gin.Context) {
 func DeleteArticle(ctx *gin.Context) {
 	var article models.Article
 	id := ctx.Param("id")
-	result := global.Db.First(&article, "id = ?", id)
+	result := global.DB.First(&article, "id = ?", id)
 	if result.Error != nil {
 		ctx.JSON(http.StatusNotFound, gin.H{"error": "Article not found"})
 		return
 	}
-	global.Db.Delete(&article) // 如果一个 model 有 DeletedAt 字段，则软删除。硬删除需要 db.Unscoped().Delete(&article)
+	global.DB.Delete(&article) // 如果一个 model 有 DeletedAt 字段，则软删除。硬删除需要 db.Unscoped().Delete(&article)
 	ctx.JSON(http.StatusOK, gin.H{"message": "Article deleted successfully"})
 
-	if err := global.RedisClient.Del(ctx, allCacheKey).Err(); err != nil {
+	if err := global.RDB.Del(ctx, allCacheKey).Err(); err != nil {
 		fmt.Println("Redis delete error:", err)
 	}
 }

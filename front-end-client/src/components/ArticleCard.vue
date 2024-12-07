@@ -1,7 +1,7 @@
 <template>
     <div class="article-card">
       <h2>{{ article.title }}</h2>
-      <p>{{ article.summary }}</p>
+      <p>{{ article.description }}</p>
       <router-link :to="`/articles/${article.ID}`">阅读更多</router-link>
     </div>
   </template>

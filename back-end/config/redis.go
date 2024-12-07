@@ -3,21 +3,30 @@ package config
 import (
 	"context"
 	"log"
-
-	"github.com/go-redis/redis/v8"
+	"os"
 
 	"exchangeapp/global"
+
+	"github.com/go-redis/redis/v8"
 )
 
 func InitRedis() {
-	RedisClient := redis.NewClient(&redis.Options{
+	RDB := redis.NewClient(&redis.Options{
 		Addr:     AppConfig.Redis.Host + ":" + AppConfig.Redis.Port,
 		Password: AppConfig.Redis.Password,
 		DB:       AppConfig.Redis.DB,
 		PoolSize: AppConfig.Redis.PoolSize,
 	})
-	if RedisClient.Ping(context.Background()).Err() != nil {
-		log.Fatalln("Redis connection failed")
+
+	_, err := RDB.Ping(context.Background()).Result()
+	if err != nil {
+		if os.Getenv("ENV") == "development" {
+			panic("Failed to connect to Redis: " + err.Error())
+		} else {
+			log.Fatalf("Failed to connect to Redis: %v", err)
+		}
 	}
-	global.RedisClient = RedisClient
+
+	println("Redis connected successfully!")
+	global.RDB = RDB
 }

@@ -10,8 +10,8 @@ import (
 )
 
 func SetupRouter() *gin.Engine {
-	router := gin.Default() // create a gin router instance
-	router.Use(favicon.New("./favicon.ico"))
+	router := gin.Default()                                           // create a gin router instance
+	router.Use(favicon.New("../front-end-client/public/favicon.ico")) // 后端可以不用设置favicon
 
 	// middleware to handle CORS
 	router.Use(middlewares.CORSMiddleware())
@@ -32,13 +32,11 @@ func SetupRouter() *gin.Engine {
 	}
 
 	private := router.Group("/api/v1")
-	private.GET("/exchange-rates", controllers.GetExchangeRate)
 	private.GET("/articles", controllers.GetArticles)
 	private.GET("/articles/:id", controllers.GetArticle)
 	private.GET("/article-likes/:articleId", controllers.GetLikes)
 	private.Use(middlewares.AuthMiddleware())
 	{
-		private.POST("/exchange-rates", controllers.CreateExchangeRate)
 		private.POST("/articles", controllers.CreateArticle)
 		private.DELETE("/articles/:id", controllers.DeleteArticle)
 		private.POST("/article-likes/:articleId", controllers.LikeArticle)

@@ -4,6 +4,7 @@ import (
 	"exchangeapp/global"
 	"exchangeapp/models"
 	"fmt"
+	"log"
 	"time"
 
 	"gorm.io/driver/mysql"
@@ -14,23 +15,26 @@ func InitDB() {
 	db_user := AppConfig.Database.User
 	db_password := AppConfig.Database.Password
 	dsn := fmt.Sprintf("%v:%v@tcp(127.0.0.1:3306)/currency_exchange?charset=utf8mb4&parseTime=True&loc=Local", db_user, db_password)
-	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
+	DB, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {
-		panic("failed to connect database")
+		log.Fatalf("Failed to connect to database: %v", err)
 	}
 
-	sqlDB, err := db.DB()
+	sqlDB, err := DB.DB()
 	if err != nil {
-		panic("failed to connect database")
+		log.Fatalf("Failed to connect to database: %v", err)
 	}
 	sqlDB.SetMaxOpenConns(AppConfig.Database.MaxOpenConns)
 	sqlDB.SetMaxIdleConns(AppConfig.Database.MaxIdleConns)
 	sqlDB.SetConnMaxLifetime(time.Duration(AppConfig.Database.ConnMaxLifetime) * time.Second) // 10 seconds
 
-	if err := db.AutoMigrate(&models.User{}, &models.ExchangeRate{}, &models.Article{}); err != nil {
-		panic("failed to migrate database")
+	// 自动迁移表结构
+	if err := DB.AutoMigrate(&models.User{}, &models.Article{}); err != nil {
+		log.Fatalf("Failed to migrate database: %v", err)
 	}
 
-	global.Db = db
+	fmt.Println("Database connected and migrated successfully!")
+
+	global.DB = DB
 
 }
