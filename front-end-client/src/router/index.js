@@ -4,7 +4,7 @@ import ArticleView from "../views/Article.vue";
 
 const routes = [
   { path: "/", name: "Home", component: HomeView },
-  { path: "/article/:id", name: "Article", component: ArticleView },
+  { path: "/articles/:id", name: "Article", component: ArticleView },
 ];
 
 const router = createRouter({

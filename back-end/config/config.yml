@@ -1,0 +1,21 @@
+app:
+  name: CurrencyExchangeApp
+  port: 8081
+  host: localhost
+  secret: zajednički_ključ+gt4wdfhy9
+
+database:
+  host: localhost
+  port: 3306
+  user: root
+  password: root
+  name: currency_exchange
+  MaxOpenConns: 100
+  MaxIdleConns: 10
+  ConnMaxLifetime: 10
+
+redis:
+  host: localhost
+  port: 6379
+  password: ""
+  db: 0
