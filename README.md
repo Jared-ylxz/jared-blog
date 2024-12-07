@@ -10,3 +10,6 @@ cd front-end-client
 npm install
 
 创建路由文件 src/router/index.js
+
+npm install axios
+npm install vue-router
