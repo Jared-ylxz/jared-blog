@@ -85,7 +85,7 @@ func GetArticles(ctx *gin.Context) {
 		return
 	} else {
 		// redis 报错
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err})
 		return
 	}
 }
