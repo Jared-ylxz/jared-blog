@@ -1,5 +1,5 @@
 app:
-  name: CurrencyExchangeApp
+  name: CurrencyjaredBlog
   port: 8081
   host: localhost
   secret: zajednički_ključ+gt4wdfhy9

@@ -1,8 +1,8 @@
 package controllers
 
 import (
-	"exchangeapp/global"
 	"fmt"
+	"jaredBlog/global"
 	"net/http"
 
 	"github.com/gin-gonic/gin"

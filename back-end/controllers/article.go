@@ -2,9 +2,9 @@ package controllers
 
 import (
 	"encoding/json"
-	"exchangeapp/global"
-	"exchangeapp/models"
 	"fmt"
+	"jaredBlog/global"
+	"jaredBlog/models"
 	"net/http"
 	"strconv"
 	"time"

@@ -1,4 +1,4 @@
-module exchangeapp
+module jaredBlog
 
 go 1.23.1
 

@@ -1,8 +1,8 @@
 package middlewares
 
 import (
-	"exchangeapp/utils"
 	"fmt"
+	"jaredBlog/utils"
 	"net/http"
 	"strings"
 

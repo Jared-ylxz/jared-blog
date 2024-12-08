@@ -1,9 +1,9 @@
 package main
 
 import (
-	"exchangeapp/config"
-	"exchangeapp/router"
 	"fmt"
+	"jaredBlog/config"
+	"jaredBlog/router"
 )
 
 func main() {

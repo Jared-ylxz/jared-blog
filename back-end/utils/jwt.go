@@ -1,7 +1,7 @@
 package utils
 
 import (
-	"exchangeapp/config"
+	"jaredBlog/config"
 	"time"
 
 	"github.com/golang-jwt/jwt"

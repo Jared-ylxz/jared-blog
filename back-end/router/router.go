@@ -1,8 +1,8 @@
 package router
 
 import (
-	"exchangeapp/controllers"
-	"exchangeapp/middlewares"
+	"jaredBlog/controllers"
+	"jaredBlog/middlewares"
 	"net/http"
 
 	"github.com/gin-gonic/gin"

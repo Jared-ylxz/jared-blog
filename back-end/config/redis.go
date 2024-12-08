@@ -5,7 +5,7 @@ import (
 	"log"
 	"os"
 
-	"exchangeapp/global"
+	"jaredBlog/global"
 
 	"github.com/go-redis/redis/v8"
 )

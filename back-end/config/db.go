@@ -1,9 +1,9 @@
 package config
 
 import (
-	"exchangeapp/global"
-	"exchangeapp/models"
 	"fmt"
+	"jaredBlog/global"
+	"jaredBlog/models"
 	"log"
 	"time"
 
