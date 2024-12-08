@@ -53,14 +53,14 @@ func Login(ctx *gin.Context) {
 		return
 	}
 
-	if !utils.VerifyPassword(input_user.Password, user.Password) {
+	if !utils.VerifyPassword(user.Password, input_user.Password) {
 		ctx.JSON(http.StatusUnauthorized, gin.H{"error": "User or password is incorrect"})
 		return
 	}
 
 	token, err := utils.GenerateToken(user.ID, user.Username)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate token"})
 		return
 	}
 
