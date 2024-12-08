@@ -22,7 +22,6 @@ func Register(ctx *gin.Context) {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-
 	user.Password = hashedPassword
 
 	if err := global.DB.Create(&user).Error; err != nil {
