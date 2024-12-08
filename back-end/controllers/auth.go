@@ -25,19 +25,14 @@ func Register(ctx *gin.Context) {
 
 	user.Password = hashedPassword
 
-	token, err := utils.GenerateJWT(user.Username)
-	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-	}
-
-	// if err := global.DB.AutoMigrate(&user); err != nil {
-	// 	ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-	// 	return
-	// }
-
 	if err := global.DB.Create(&user).Error; err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
+	}
+
+	token, err := utils.GenerateToken(user.ID, user.Username)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 	}
 
 	ctx.JSON(http.StatusCreated, gin.H{"token": token})
@@ -64,7 +59,7 @@ func Login(ctx *gin.Context) {
 		return
 	}
 
-	token, err := utils.GenerateJWT(user.Username)
+	token, err := utils.GenerateToken(user.ID, user.Username)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return

@@ -18,7 +18,7 @@ func AuthMiddleware() gin.HandlerFunc {
 			return
 		}
 
-		username, err := utils.ParseJWT(inputToken)
+		userID, username, err := utils.ParseToken(inputToken)
 		if err != nil {
 			ctx.JSON(http.StatusUnauthorized, gin.H{
 				"message": err.Error(),
@@ -26,7 +26,8 @@ func AuthMiddleware() gin.HandlerFunc {
 			ctx.Abort()
 			return
 		}
-		ctx.Set("username", username) // 将用户名存入上下文
-		ctx.Next()                    // 执行后续的中间件
+		ctx.Set("userID", userID) // 将用户ID和用户名存入上下文
+		ctx.Set("username", username)
+		ctx.Next() // 执行后续的中间件
 	}
 }
