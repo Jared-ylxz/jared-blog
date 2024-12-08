@@ -2,9 +2,9 @@
     <nav class="navbar">
       <router-link to="/">首页</router-link>
     </nav>
-  </template>
+</template>
   
-  <style>
+<style>
   .navbar {
     background-color: #333;
     padding: 1rem;
@@ -16,4 +16,4 @@
     text-decoration: none;
     margin: 0 1rem;
   }
-  </style>
+</style>
