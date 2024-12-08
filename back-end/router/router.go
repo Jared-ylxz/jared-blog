@@ -23,7 +23,7 @@ func SetupRouter() *gin.Engine {
 	// article routes
 	articles := router.Group("/api/v1/articles")
 	{
-		articles.GET("/0", controllers.GetArticles)
+		articles.GET("/list", controllers.GetArticles)
 		articles.GET("/:id", controllers.GetArticle)
 		articles.POST("/", middlewares.AuthMiddleware(), controllers.CreateArticle)
 		articles.DELETE("/:id", middlewares.AuthMiddleware(), controllers.DeleteArticle)
