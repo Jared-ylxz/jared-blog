@@ -46,42 +46,36 @@ func CreateArticle(ctx *gin.Context) {
 func GetArticles(ctx *gin.Context) {
 	var articles []models.Article
 	redisData, err := global.RDB.Get(ctx, allCacheKey).Result()
-	if err == nil && redisData != "" {
-		// redis 缓存命中
-		fmt.Println("Redis get data!")
-		// 将 JSON 字符串反序列化为文章列表
-		err := json.Unmarshal([]byte(redisData), &articles)
+	if err == nil {
+		// 如果缓存命中，则直接从缓存中获取数据，解析为文章列表并返回
+		err := json.Unmarshal([]byte(redisData), &articles) // 将 JSON 字符串反序列化为文章列表
 		if err != nil {
 			ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to unmarshal articles from cache"})
 			return
 		}
 		ctx.JSON(http.StatusOK, articles)
 		return
-	} else if err != nil {
-		// redis 缓存未命中, 从数据库获取数据并缓存
-		fmt.Println("Redis not found:", err)
+	} else {
+		// 如果缓存未命中, 则从数据库获取数据并缓存
 		result := global.DB.Find(&articles, "deleted_at IS NULL")
 		if result.Error != nil {
-			ctx.JSON(http.StatusNotFound, gin.H{"error": "Articles not found"})
+			ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch articles"})
 			return
 		}
-		// 将文章列表序列化为 JSON 字符串
-		jsonData, err := json.Marshal(articles)
-		if err != nil {
-			ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to marshal articles"})
-			return
+
+		// 将查询结果转为简单的结构体，仅返回 Title 和 Description
+		var responseData []map[string]interface{}
+		for _, article := range articles {
+			responseData = append(responseData, map[string]interface{}{
+				"title":       article.Title,
+				"description": article.Description[:100],
+			})
 		}
-		// 将 JSON 字符串存储到 Redis 中
-		statusCmd := global.RDB.Set(ctx, allCacheKey, jsonData, time.Hour*24)
-		if statusCmd.Err() != nil {
-			ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to set cache in Redis"})
-			return
-		}
-		ctx.JSON(http.StatusOK, articles)
-		return
-	} else {
-		// redis 报错
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err})
+
+		// 将结果存入 Redis，设置缓存过期时间
+		jsonData, _ := json.Marshal(responseData)                // 将文章列表序列化为 JSON 字符串
+		global.RDB.Set(ctx, allCacheKey, jsonData, time.Hour*24) // 将 JSON 字符串存储到 Redis 中
+		ctx.JSON(http.StatusOK, responseData)
 		return
 	}
 }
