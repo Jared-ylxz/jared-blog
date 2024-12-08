@@ -22,21 +22,17 @@ func CreateArticle(ctx *gin.Context) {
 		return
 	}
 
-	any_username, exists := ctx.Get("username")
+	userID, exists := ctx.Get("userID")
 	if exists {
-		username := any_username.(string)
-		var user models.User
-		result := global.DB.First(&user, "username = ?", username)
-		if result.Error != nil {
-			ctx.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
-			return
-		}
-		article.AuthorID = user.ID
+		article.AuthorID = userID.(uint)
+	} else {
+		ctx.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
+		return
 	}
 
 	err := global.DB.Create(&article).Error
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"CreateArticle error": err.Error()})
 		return
 	}
 
