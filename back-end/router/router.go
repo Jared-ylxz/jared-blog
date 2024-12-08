@@ -23,7 +23,7 @@ func SetupRouter() *gin.Engine {
 	// article routes
 	articles := router.Group("/api/v1/articles")
 	{
-		articles.GET("/list", controllers.GetArticles)
+		articles.GET("/", controllers.GetArticles) // 如果前端报错CORS，可以尝试在Chrome打开无痕模式
 		articles.GET("/:id", controllers.GetArticle)
 		articles.POST("/", middlewares.AuthMiddleware(), controllers.CreateArticle)
 		articles.DELETE("/:id", middlewares.AuthMiddleware(), controllers.DeleteArticle)
