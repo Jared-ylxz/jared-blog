@@ -53,11 +53,12 @@ func GetArticles(ctx *gin.Context) {
 			ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to unmarshal articles from cache"})
 			return
 		}
+
 		ctx.JSON(http.StatusOK, articles)
 		return
 	} else {
 		// 如果缓存未命中, 则从数据库获取数据并缓存
-		result := global.DB.Find(&articles, "deleted_at IS NULL")
+		result := global.DB.Select("id, title, content").Find(&articles, "deleted_at IS NULL") // Select 仅查询部分字段
 		if result.Error != nil {
 			ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch articles"})
 			return
@@ -90,42 +91,41 @@ func GetArticle(ctx *gin.Context) {
 	}
 	cacheKey := fmt.Sprintf(oneCacheKey, id_num)
 	redisData, err := global.RDB.Get(ctx, cacheKey).Result()
-	if err == nil && redisData != "" {
-		// redis 缓存命中
+	if err == nil {
+		// 如果缓存命中，则直接从缓存中获取数据，解析为文章列表并返回
 		fmt.Println("Redis get data!")
-		// 将 JSON 字符串反序列化为文章
-		err := json.Unmarshal([]byte(redisData), &article)
+		err := json.Unmarshal([]byte(redisData), &article) // 将 JSON 字符串反序列化为文章
 		if err != nil {
 			ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to unmarshal articles from cache"})
 			return
 		}
+
 		ctx.JSON(http.StatusOK, article)
 		return
-	} else if err != nil {
-		// redis 缓存未命中, 从数据库获取数据并缓存
-		fmt.Println("Redis not found:", err.Error())
+	} else {
+		// 如果缓存未命中, 则从数据库获取数据并缓存
+		fmt.Println("Redis not found!")
 		result := global.DB.First(&article, "id = ?", id_num)
 		if result.Error != nil {
-			ctx.JSON(http.StatusNotFound, gin.H{"error": "Articles not found"})
+			ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch article"})
 			return
 		}
+
 		// 将文章序列化为 JSON 字符串
 		jsonData, err := json.Marshal(article)
 		if err != nil {
-			ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to marshal articles"})
+			ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to marshal article to JSON"})
 			return
 		}
+
 		// 将 JSON 字符串存储到 Redis 中
 		statusCmd := global.RDB.Set(ctx, fmt.Sprintf(oneCacheKey, article.ID), jsonData, time.Hour*24)
 		if statusCmd.Err() != nil {
 			ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to set cache in Redis"})
 			return
 		}
+
 		ctx.JSON(http.StatusOK, article)
-		return
-	} else {
-		// redis 报错
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err})
 		return
 	}
 }
