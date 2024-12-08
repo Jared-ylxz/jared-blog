@@ -44,10 +44,10 @@ func CreateArticle(ctx *gin.Context) {
 }
 
 func GetArticles(ctx *gin.Context) {
-	var articles []models.Article
 	redisData, err := global.RDB.Get(ctx, allCacheKey).Result()
 	if err == nil {
 		// 如果缓存命中，则直接从缓存中获取数据，解析为文章列表并返回
+		var articles []map[string]interface{}               // 这里不能用 models.Article 结构体，因为它会返回所有字段
 		err := json.Unmarshal([]byte(redisData), &articles) // 将 JSON 字符串反序列化为文章列表
 		if err != nil {
 			ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to unmarshal articles from cache"})
@@ -58,6 +58,7 @@ func GetArticles(ctx *gin.Context) {
 		return
 	} else {
 		// 如果缓存未命中, 则从数据库获取数据并缓存
+		var articles []models.Article
 		result := global.DB.Select("id, title, content").Find(&articles, "deleted_at IS NULL") // Select 仅查询部分字段
 		if result.Error != nil {
 			ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch articles"})
@@ -68,8 +69,9 @@ func GetArticles(ctx *gin.Context) {
 		var responseData []map[string]interface{}
 		for _, article := range articles {
 			responseData = append(responseData, map[string]interface{}{
+				"id":          article.ID,
 				"title":       article.Title,
-				"description": article.Description[:100],
+				"description": article.Description,
 			})
 		}
 
@@ -83,13 +85,10 @@ func GetArticles(ctx *gin.Context) {
 
 func GetArticle(ctx *gin.Context) {
 	var article models.Article
-	id_str := ctx.Param("id")
-	id_num, err := strconv.Atoi(id_str)
-	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
-	}
-	cacheKey := fmt.Sprintf(oneCacheKey, id_num)
+	idStr := ctx.Param("id")
+	idUint64, _ := strconv.ParseUint(idStr, 10, 64)
+	idUint := uint(idUint64)
+	cacheKey := fmt.Sprintf(oneCacheKey, idUint)
 	redisData, err := global.RDB.Get(ctx, cacheKey).Result()
 	if err == nil {
 		// 如果缓存命中，则直接从缓存中获取数据，解析为文章列表并返回
@@ -105,7 +104,7 @@ func GetArticle(ctx *gin.Context) {
 	} else {
 		// 如果缓存未命中, 则从数据库获取数据并缓存
 		fmt.Println("Redis not found!")
-		result := global.DB.First(&article, "id = ?", id_num)
+		result := global.DB.First(&article, "id = ?", idUint)
 		if result.Error != nil {
 			ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch article"})
 			return
