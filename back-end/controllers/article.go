@@ -90,8 +90,9 @@ func GetArticle(ctx *gin.Context) {
 	idUint := uint(idUint64)
 	cacheKey := fmt.Sprintf(oneCacheKey, idUint)
 	redisData, err := global.RDB.Get(ctx, cacheKey).Result()
+
+	// 如果缓存命中，则直接从缓存中获取数据，解析为文章列表并返回
 	if err == nil {
-		// 如果缓存命中，则直接从缓存中获取数据，解析为文章列表并返回
 		fmt.Println("Redis get data!")
 		err := json.Unmarshal([]byte(redisData), &article) // 将 JSON 字符串反序列化为文章
 		if err != nil {
@@ -104,11 +105,22 @@ func GetArticle(ctx *gin.Context) {
 	} else {
 		// 如果缓存未命中, 则从数据库获取数据并缓存
 		fmt.Println("Redis not found!")
-		result := global.DB.First(&article, "id = ?", idUint)
+		result := global.DB.Preload("Author").First(&article, "id = ?", idUint) // Preload 似乎还没起作用
 		if result.Error != nil {
-			ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch article"})
+			ctx.JSON(http.StatusNotFound, gin.H{"error": "Failed to fetch article"})
 			return
 		}
+
+		// // 构造返回数据
+		// responseData := map[string]interface{}{
+		// 	"id":      article.ID,
+		// 	"title":   article.Title,
+		// 	"content": article.Content,
+		// 	"author": map[string]interface{}{
+		// 		"id":       article.Author.ID,
+		// 		"username": article.Author.Username,
+		// 	},
+		// }
 
 		// 将文章序列化为 JSON 字符串
 		jsonData, err := json.Marshal(article)
