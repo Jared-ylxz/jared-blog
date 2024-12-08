@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"jaredBlog/global"
 	"jaredBlog/models"
+	"log"
 	"net/http"
 	"strconv"
 	"time"
@@ -26,7 +27,7 @@ func CreateArticle(ctx *gin.Context) {
 	if exists {
 		article.AuthorID = userID.(uint)
 	} else {
-		ctx.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
+		ctx.JSON(http.StatusNotFound, gin.H{"error": "Invalid token: User not found"})
 		return
 	}
 
@@ -39,7 +40,7 @@ func CreateArticle(ctx *gin.Context) {
 	ctx.JSON(http.StatusCreated, article)
 
 	if err := global.RDB.Del(ctx, allCacheKey).Err(); err != nil {
-		fmt.Println("Redis delete error:", err)
+		log.Println("Redis delete error:", err)
 	}
 }
 
@@ -144,15 +145,30 @@ func GetArticle(ctx *gin.Context) {
 func DeleteArticle(ctx *gin.Context) {
 	var article models.Article
 	id := ctx.Param("id")
+	// TODO 增加DeletedBy字段，以及使用权限控制只有超管以及作者才能删除文章
+	// userID, exists := ctx.Get("userID")
+	// if exists {
+	// 	article.DeletedBy = userID.(uint)
+	// } else {
+	// 	ctx.JSON(http.StatusNotFound, gin.H{"error": "Invalid token: User not found"})
+	// 	return
+	// }
+
 	result := global.DB.First(&article, "id = ?", id)
 	if result.Error != nil {
 		ctx.JSON(http.StatusNotFound, gin.H{"error": "Article not found"})
 		return
 	}
+
+	// if article.AuthorID != userID {
+	// 	ctx.JSON(http.StatusForbidden, gin.H{"error": "You are not allowed to delete this article"})
+	// 	return
+	// }
+
 	global.DB.Delete(&article) // 如果一个 model 有 DeletedAt 字段，则软删除。硬删除需要 db.Unscoped().Delete(&article)
 	ctx.JSON(http.StatusOK, gin.H{"message": "Article deleted successfully"})
 
 	if err := global.RDB.Del(ctx, allCacheKey).Err(); err != nil {
-		fmt.Println("Redis delete error:", err)
+		log.Println("Redis delete error:", err)
 	}
 }

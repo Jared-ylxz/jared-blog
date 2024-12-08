@@ -9,11 +9,12 @@ import (
 
 func CORSMiddleware() gin.HandlerFunc {
 	return cors.New(cors.Config{
-		AllowOrigins:     []string{"http://localhost:5173", "http://localhost:5174", "http://localhost:5175", "http://localhost:5176", "http://localhost:5177", "http://localhost:5178", "http://localhost:5179"},
-		AllowMethods:     []string{"GET", "POST", "OPTIONS"},
-		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization"},
+		// AllowOrigins: []string{"*"},
+		AllowOrigins:     []string{"http://localhost:5173", "https://my-frontend-domain.com"}, // 指定允许访问的前端地址
+		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},                 // 指定允许的 HTTP 方法
+		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization"},                 // 指定允许的 HTTP 请求头
 		ExposeHeaders:    []string{"Content-Length"},
-		AllowCredentials: true,
+		AllowCredentials: true, // 如果跨域请求需要携带 Cookie 或其他凭据，需要设置为 true
 		MaxAge:           12 * time.Hour,
 	})
 }

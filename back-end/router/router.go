@@ -3,7 +3,6 @@ package router
 import (
 	"jaredBlog/controllers"
 	"jaredBlog/middlewares"
-	"net/http"
 
 	"github.com/gin-gonic/gin"
 	"github.com/thinkerou/favicon"
@@ -16,30 +15,20 @@ func SetupRouter() *gin.Engine {
 	// middleware to handle CORS
 	router.Use(middlewares.CORSMiddleware())
 
-	public := router.Group("/api/v1/public")
-	{
-		public.GET("/ping", func(ctx *gin.Context) {
-			ctx.JSON(http.StatusOK, gin.H{
-				"message": "pong",
-			})
-		})
-	}
+	// user routes
+	users := router.Group("/api/v1/users")
+	users.POST("/login", controllers.Login)
+	users.POST("/register", controllers.Register)
 
-	user := router.Group("/api/v1/users")
+	// article routes
+	articles := router.Group("/api/v1/articles")
 	{
-		user.POST("/login", controllers.Login)
-		user.POST("/register", controllers.Register)
-	}
-
-	private := router.Group("/api/v1")
-	private.GET("/articles", controllers.GetArticles)
-	private.GET("/articles/:id", controllers.GetArticle)
-	private.GET("/article-likes/:articleId", controllers.GetLikes)
-	private.Use(middlewares.AuthMiddleware())
-	{
-		private.POST("/articles", controllers.CreateArticle)
-		private.DELETE("/articles/:id", controllers.DeleteArticle)
-		private.POST("/article-likes/:articleId", controllers.LikeArticle)
+		articles.GET("/", controllers.GetArticles)
+		articles.GET("/:id", controllers.GetArticle)
+		articles.POST("/articles", middlewares.AuthMiddleware(), controllers.CreateArticle)
+		articles.DELETE("/articles/:id", middlewares.AuthMiddleware(), controllers.DeleteArticle)
+		// articles.GET("/article-likes/:articleId", controllers.GetLikes)
+		// articles.POST("/article-likes/:articleId", controllers.LikeArticle)
 	}
 
 	return router
