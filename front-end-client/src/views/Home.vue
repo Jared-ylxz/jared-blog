@@ -2,7 +2,6 @@
     <div>
       <Navbar />
       <div class="container">
-        <h1>文章列表</h1>
         <div v-if="loading">加载中...</div>
         <div v-else>
           <ArticleCard

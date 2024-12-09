@@ -26,6 +26,7 @@
     padding: 1rem;
     margin-bottom: 1rem;
     border-radius: 4px;
+    transition: transform 0.4s ease, background-color 0.4s ease;  /* 鼠标悬停时，元素上浮的速度 */
   }
 
   .article-card:hover{
@@ -43,4 +44,8 @@
       color: #777;
       margin-bottom: 10px;
   }
-  </style>
+    
+  .article-card a link{
+    text-decoration: none; /* 移除下划线 */
+  }
+</style>
