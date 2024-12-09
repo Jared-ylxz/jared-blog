@@ -18,7 +18,7 @@
   };
 </script>
   
-<style>
+<style scoped>
   .article-card {
     color: rgb(53, 53, 53);
     background-color: #fff;

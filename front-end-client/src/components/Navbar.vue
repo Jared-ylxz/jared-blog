@@ -4,7 +4,7 @@
     </nav>
 </template>
   
-<style>
+<style scoped>
   .navbar{
     text-align: center;
     padding: 1rem 10rem;

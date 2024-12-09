@@ -1,17 +1,17 @@
 <template>
-    <div>
-      <Navbar />
-      <div class="container">
-        <div v-if="loading">加载中...</div>
-        <div v-else>
-          <h1>{{ article.title }}</h1>
-          <p>{{ article.content }}</p>
-        </div>
+  <div>
+    <Navbar />
+    <div class="container">
+      <div v-if="loading">加载中...</div>
+      <div v-else>
+        <h1>{{ article.title }}</h1>
+        <p>{{ article.content }}</p>
       </div>
     </div>
-  </template>
+  </div>
+</template>
   
-  <script>
+<script>
   import { ref, onMounted } from "vue";
   import { getArticleById } from "../apis/article";
   import Navbar from "../components/Navbar.vue";
@@ -33,12 +33,13 @@
       return { article, loading };
     },
   };
-  </script>
+</script>
   
-  <style>
+<style scoped>
   .container {
+    background-color: #fff;
     max-width: 800px;
     margin: 0 auto;
     padding: 1rem;
   }
-  </style>
+</style>
