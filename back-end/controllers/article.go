@@ -68,11 +68,22 @@ func GetArticles(ctx *gin.Context) {
 
 		// 将查询结果转为简单的结构体，仅返回 Title 和 Description
 		var responseData []map[string]interface{}
+		max_description_len := 120
 		for _, article := range articles {
+			var _description string
+			if article.Description == "" {
+				if len(article.Content) > max_description_len {
+					_description = article.Content[:max_description_len] + "…"
+				} else {
+					_description = article.Content
+				}
+			} else {
+				_description = article.Description
+			}
 			responseData = append(responseData, map[string]interface{}{
 				"id":          article.ID,
 				"title":       article.Title,
-				"description": article.Description,
+				"description": _description,
 			})
 		}
 
