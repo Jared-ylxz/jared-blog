@@ -1,10 +1,10 @@
 <template>
-  <router-link :to="`/articles/${article.id}`">
+  <RouterLink :to="`/articles/${article.id}`">
     <div class="article-card">
       <h3 class="article-title">{{ article.title }}</h3>
-      <p class="article-message">{{ article.description }}</p>
+      <p class="article-description">{{ article.description }}</p>
     </div>
-  </router-link>
+  </RouterLink>
 </template>
   
 <script>
@@ -35,17 +35,17 @@
   }
 
   .article-title {
-      color: #42b983;
+      color: #40e0c5;
       margin-bottom: 10px;
   }
 
-  .article-message {
+  .article-description {
       font-size: 0.9em;
       color: #777;
       margin-bottom: 10px;
   }
     
-  .article-card a link{
-    text-decoration: none; /* 移除下划线 */
-  }
+    a {
+      text-decoration: none; /* 移除下划线 */
+    }
 </style>
