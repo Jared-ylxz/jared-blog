@@ -1,7 +1,7 @@
 <template>
     <nav class="navbar">
       <router-link class="nav-link" to="/">首页</router-link>
-      <RouterLink class="nav-link" to="/blog-create">新建</RouterLink>
+      <RouterLink class="nav-link" to="/article-create">新建</RouterLink>
       <RouterLink class="nav-link" to="/">友链</RouterLink>
       <RouterLink class="nav-link" to="/">登录</RouterLink>
       <RouterLink class="nav-link" to="/">注册</RouterLink>

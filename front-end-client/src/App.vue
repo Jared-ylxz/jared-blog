@@ -10,7 +10,7 @@
 
 <style scoped>
 .background-container {
-  background-image: url('./assets/site-background/wallhaven-yxdrex.png'); /* 背景图片 */
+  background-image: url('../public/site-background/wallhaven-0jj33q.jpg'); /* 背景图片 */
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
