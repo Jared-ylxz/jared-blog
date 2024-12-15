@@ -1,8 +1,9 @@
-# jaredBlog2
-This is my blog
+# jaredBlog
+This is my blog. It's built with Go and Vue.
 
+
+# 创建项目过程的简单记录
 1.创建后端项目：
-
 
 2.创建前端前台项目：
 cd <my-project-folder>
@@ -15,7 +16,6 @@ touch src/router/index.js
 npm install vue-router
 npm install axios
 
-
 3.创建前端后台项目：
 cd <my-project-folder>
 npm create vite@latest front-end-admin --template vue
@@ -27,6 +27,20 @@ touch src/router/index.js
 npm install vue-router
 npm install axios
 
+
+# 启动项目：
+cd <my-project-folder>
+cd back-end
+开发环境：RUNNING_ENV=development go run main.go
+生产环境：RUNNING_ENV=production go run main.go
+cd ../front-end-client
+开发环境：npm run dev  # 会加载 .env.development 文件
+生产环境：npm run build  # 会加载 .env.production 文件
+cd ../front-end-admin
+开发环境：npm run dev  # 会加载 .env.development 文件
+生产环境：npm run build  # 会加载 .env.production 文件
+
+
 # TODO
 <!-- 前端添加文章发布功能
 前端添加注册、登录功能
@@ -34,6 +48,7 @@ npm install axios
 前端增加管理页面，给用户删除、编辑文章
 前端增加后台管理系统，用于管理员管理文章、评论等内容 -->
 
+将数据库、redis的配置信息添加到.env文件中
 前端添加后台管理系统，用于对文章进行增、删、改
 前端控制跳转到后台时，如果用户未登录，需要登录
 

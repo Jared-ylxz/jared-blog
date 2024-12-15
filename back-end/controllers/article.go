@@ -7,6 +7,7 @@ import (
 	"jaredBlog/models"
 	"log"
 	"net/http"
+	"os"
 	"strconv"
 	"time"
 
@@ -105,7 +106,11 @@ func GetArticle(ctx *gin.Context) {
 
 	// 如果缓存命中，则直接从缓存中获取数据，解析为文章列表并返回
 	if err == nil {
-		fmt.Println("Redis get data!")
+		if os.Getenv("RUNNING_ENV") == "production" {
+			log.Fatalf("Redis get data!")
+		} else {
+			fmt.Println("Redis get data!")
+		}
 		err := json.Unmarshal([]byte(redisData), &article) // 将 JSON 字符串反序列化为文章
 		if err != nil {
 			ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to unmarshal articles from cache"})
@@ -116,7 +121,11 @@ func GetArticle(ctx *gin.Context) {
 		return
 	} else {
 		// 如果缓存未命中, 则从数据库获取数据并缓存
-		fmt.Println("Redis not found!")
+		if os.Getenv("RUNNING_ENV") == "production" {
+			log.Fatalf("Redis not found!")
+		} else {
+			fmt.Println("Redis not found!")
+		}
 		result := global.DB.Preload("Author").First(&article, "id = ?", idUint) // Preload 似乎还没起作用
 		if result.Error != nil {
 			ctx.JSON(http.StatusNotFound, gin.H{"error": "Failed to fetch article"})

@@ -2,7 +2,7 @@ import axios from 'axios';
 
 // 创建 axios 实例
 const apiClient = axios.create({
-  baseURL: 'http://localhost:8081/api/v1', // 后端 API 的基础 URL
+  baseURL: import.meta.env.VITE_API_BASE_URL, // 后端服务地址，使用 Vite 提供的环境变量
   timeout: 10000,
 });
 

@@ -20,10 +20,10 @@ func InitRedis() {
 
 	_, err := RDB.Ping(context.Background()).Result()
 	if err != nil {
-		if os.Getenv("ENV") == "development" {
-			panic("Failed to connect to Redis: " + err.Error())
-		} else {
+		if os.Getenv("RUNNING_ENV") == "production" {
 			log.Fatalf("Failed to connect to Redis: %v", err)
+		} else {
+			panic("Failed to connect to Redis: " + err.Error())
 		}
 	}
 

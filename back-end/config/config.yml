@@ -1,5 +1,5 @@
 app:
-  name: CurrencyjaredBlog
+  name: jaredBlog
   port: 8081
   host: localhost
   secret: zajednički_ključ+gt4wdfhy9
@@ -9,7 +9,7 @@ database:
   port: 3306
   user: root
   password: root
-  name: currency_exchange
+  name: jaredBlog
   MaxOpenConns: 100
   MaxIdleConns: 10
   ConnMaxLifetime: 10
