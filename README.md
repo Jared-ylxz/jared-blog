@@ -1,24 +1,31 @@
 # jaredBlog2
 This is my blog
 
+1.创建后端项目：
 
-前端前台创建步骤：
+
+2.创建前端前台项目：
 cd <my-project-folder>
 npm create vite@latest front-end-client --template vue
 选择Vue和JavaScript
 cd front-end-client
 npm install
-
-创建路由文件 src/router/index.js
-
-npm install axios
+mkdir src/router/
+touch src/router/index.js
 npm install vue-router
+npm install axios
 
 
-前端后台创建步骤：
+3.创建前端后台项目：
 cd <my-project-folder>
-npm create vite@latest front-end-admin --template vanilla
-
+npm create vite@latest front-end-admin --template vue
+选择Vue和JavaScript
+cd front-end-admin
+npm install
+mkdir src/router/
+touch src/router/index.js
+npm install vue-router
+npm install axios
 
 # TODO
 <!-- 前端添加文章发布功能
