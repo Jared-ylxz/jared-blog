@@ -32,6 +32,8 @@ func CreateArticle(ctx *gin.Context) {
 		return
 	}
 
+	article.DeletedAt = nil
+
 	err := global.DB.Create(&article).Error
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"CreateArticle error": err.Error()})
