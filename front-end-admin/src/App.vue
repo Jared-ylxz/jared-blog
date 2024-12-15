@@ -5,7 +5,7 @@
         <nav>
           <router-link to="/">文章列表</router-link>
           <router-link to="/articles/new">新增文章</router-link>
-          <router-link to="/login">登录</router-link>
+          <router-link to="/login" class="right">登录</router-link>
         </nav>
       </header>
   
@@ -62,6 +62,10 @@
   
   nav a:hover {
     background-color: #0056b3;
+  }
+
+  nav .right {
+    margin-left: auto;
   }
   
   /* 路由内容区域样式 */

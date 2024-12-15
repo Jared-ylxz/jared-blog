@@ -6,6 +6,17 @@ const apiClient = axios.create({
   timeout: 10000,
 });
 
+// 添加请求拦截器，在发送请求之前获取 token
+apiClient.interceptors.request.use((config) => {
+  const token = localStorage.getItem('token'); // 从 localStorage 获取 token
+  if (token) {
+    config.headers['Authorization'] = `${token}`; // 将 token 添加到请求头
+  }
+  return config;
+}, (error) => {
+  return Promise.reject(error);
+});
+
 // 获取文章列表
 export const fetchArticles = () => apiClient.get('/articles/');
 
