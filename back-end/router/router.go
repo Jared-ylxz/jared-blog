@@ -26,9 +26,8 @@ func SetupRouter() *gin.Engine {
 		articles.GET("/", controllers.GetArticles) // 如果前端报错CORS，可以尝试在Chrome打开无痕模式
 		articles.GET("/:id", controllers.GetArticleDetail)
 		articles.POST("/", middlewares.AuthMiddleware(), controllers.CreateArticle)
+		articles.PUT("/:id", middlewares.AuthMiddleware(), controllers.UpdateArticle)
 		articles.DELETE("/:id", middlewares.AuthMiddleware(), controllers.DeleteArticle)
-		// articles.GET("/article-likes/:articleId", controllers.GetLikes)
-		// articles.POST("/article-likes/:articleId", controllers.LikeArticle)
 	}
 
 	return router

@@ -15,7 +15,7 @@ import (
 )
 
 var allCacheKey string = "articles"
-var oneCacheKey string = "articles:%d"
+var baseOneCacheKey string = "articles:%d"
 
 func CreateArticle(ctx *gin.Context) {
 	var article models.Article
@@ -38,11 +38,11 @@ func CreateArticle(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusCreated, article)
-
 	if err := global.RDB.Del(ctx, allCacheKey).Err(); err != nil {
 		log.Println("Redis delete error:", err)
 	}
+
+	ctx.JSON(http.StatusCreated, article)
 }
 
 func GetArticles(ctx *gin.Context) {
@@ -101,8 +101,8 @@ func GetArticleDetail(ctx *gin.Context) {
 	idStr := ctx.Param("id")
 	idUint64, _ := strconv.ParseUint(idStr, 10, 64)
 	idUint := uint(idUint64)
-	cacheKey := fmt.Sprintf(oneCacheKey, idUint)
-	redisData, err := global.RDB.Get(ctx, cacheKey).Result()
+	oneCacheKey := fmt.Sprintf(baseOneCacheKey, idUint)
+	redisData, err := global.RDB.Get(ctx, oneCacheKey).Result()
 
 	// 如果缓存命中，则直接从缓存中获取数据，解析为文章列表并返回
 	if err == nil {
@@ -151,7 +151,8 @@ func GetArticleDetail(ctx *gin.Context) {
 		}
 
 		// 将 JSON 字符串存储到 Redis 中
-		statusCmd := global.RDB.Set(ctx, fmt.Sprintf(oneCacheKey, article.ID), jsonData, time.Hour*24)
+		oneCacheKey := fmt.Sprintf(baseOneCacheKey, article.ID)
+		statusCmd := global.RDB.Set(ctx, oneCacheKey, jsonData, time.Hour*24)
 		if statusCmd.Err() != nil {
 			ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to set cache in Redis"})
 			return
@@ -160,6 +161,64 @@ func GetArticleDetail(ctx *gin.Context) {
 		ctx.JSON(http.StatusOK, article)
 		return
 	}
+}
+
+func UpdateArticle(ctx *gin.Context) {
+	// Parse the article ID from the URL
+	idStr := ctx.Param("id")
+	idUint64, err := strconv.ParseUint(idStr, 10, 64)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Invalid article ID"})
+		return
+	}
+	idUint := uint(idUint64)
+
+	// Define the input structure for the update
+	type UpdateArticleInput struct {
+		Title       string `json:"title"`
+		Description string `json:"description"`
+		Content     string `json:"content"`
+	}
+
+	var input UpdateArticleInput
+
+	// Bind the JSON payload to the input struct
+	if err := ctx.ShouldBindJSON(&input); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("Failed to bind JSON: %s", err.Error())})
+		return
+	}
+
+	// Find the article in the database
+	var article models.Article
+	result := global.DB.First(&article, "id = ?", idUint)
+	if result.Error != nil {
+		ctx.JSON(http.StatusNotFound, gin.H{"error": fmt.Sprintf("Article not found: %s", result.Error.Error())})
+		return
+	}
+
+	// Update the article fields
+	article.Title = input.Title
+	article.Description = input.Description
+	article.Content = input.Content
+
+	// Save the updated article to the database
+	result = global.DB.Model(&article).Select("Title", "Description", "Content").Updates(article) // Model(&article)表示id=article.ID，Select 表示只更新部分字段
+	if result.Error != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": fmt.Sprintf("Failed to update article: %s", result.Error.Error())})
+		return
+	}
+
+	// Clear the relevant Redis cache
+	oneCacheKey := fmt.Sprintf(baseOneCacheKey, idUint)
+	if err := global.RDB.Del(ctx, allCacheKey).Err(); err != nil {
+		log.Println("Failed to clear all articles cache:", err)
+	}
+	if err := global.RDB.Del(ctx, oneCacheKey).Err(); err != nil {
+		log.Println("Failed to clear single article cache:", err)
+	}
+
+	// Return the updated article
+	ctx.JSON(http.StatusOK, article)
 }
 
 func DeleteArticle(ctx *gin.Context) {
