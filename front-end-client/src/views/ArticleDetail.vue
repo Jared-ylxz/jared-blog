@@ -13,7 +13,7 @@
   
 <script>
   import { ref, onMounted } from "vue";
-  import { getArticleById } from "../apis/article";
+  import { getArticleDetailById } from "../apis/article";
   import Navbar from "../components/Navbar.vue";
   import { useRoute } from "vue-router";
   
@@ -26,7 +26,7 @@
   
       onMounted(async () => {
         const articleId = route.params.id;
-        article.value = await getArticleById(articleId);
+        article.value = await getArticleDetailById(articleId);
         loading.value = false;
       });
   

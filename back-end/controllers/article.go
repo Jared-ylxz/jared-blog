@@ -96,7 +96,7 @@ func GetArticles(ctx *gin.Context) {
 	}
 }
 
-func GetArticle(ctx *gin.Context) {
+func GetArticleDetail(ctx *gin.Context) {
 	var article models.Article
 	idStr := ctx.Param("id")
 	idUint64, _ := strconv.ParseUint(idStr, 10, 64)

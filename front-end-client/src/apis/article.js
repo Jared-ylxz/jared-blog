@@ -9,7 +9,7 @@ export const getArticles = async () => {
 };
 
 // 获取文章详情
-export const getArticleById = async (id) => {
+export const getArticleDetailById = async (id) => {
   const response = await axios.get(`${API_BASE_URL}/articles/${id}`);
   return response.data;
 };
