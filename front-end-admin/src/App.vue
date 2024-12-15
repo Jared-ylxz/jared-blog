@@ -5,6 +5,7 @@
         <nav>
           <router-link to="/">文章列表</router-link>
           <router-link to="/articles/new">新增文章</router-link>
+          <router-link to="/login">登录</router-link>
         </nav>
       </header>
   

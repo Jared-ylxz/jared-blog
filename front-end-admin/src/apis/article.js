@@ -10,13 +10,13 @@ const apiClient = axios.create({
 export const fetchArticles = () => apiClient.get('/articles/');
 
 // 获取文章详情
-export const fetchArticleDetail = (id) => apiClient.get(`/articles/${id}`);
+export const fetchArticleDetail = (id) => apiClient.get(`/articles/${id}/`);
 
 // 创建新文章
-export const createArticle = (data) => apiClient.post('/articles', data);
+export const createArticle = (data) => apiClient.post('/articles/', data);
 
 // 更新文章
-export const updateArticle = (id, data) => apiClient.put(`/articles/${id}`, data);
+export const updateArticle = (id, data) => apiClient.patch(`/articles/${id}/`, data);
 
 // 删除文章
-export const deleteArticle = (id) => apiClient.delete(`/articles/${id}`);
+export const deleteArticle = (id) => apiClient.delete(`/articles/${id}/`);
