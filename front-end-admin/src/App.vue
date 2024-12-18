@@ -5,7 +5,8 @@
       <nav>
         <router-link to="/">文章列表</router-link>
         <router-link to="/articles/new">新增文章</router-link>
-        <router-link to="/login" class="right">登录</router-link>
+        <router-link class="right-nav" v-if="!isLoggedIn" to="/login">登录</router-link>
+        <a class="right-nav" v-else @click="confirmLogout">登出</a>
       </nav>
     </header>
 
@@ -19,6 +20,24 @@
 <script>
   export default {
     name: "App",
+    data() {
+      return {
+        isLoggedIn: false, // 这里可以根据实际情况进行更新
+      };
+    },
+    methods: {
+      confirmLogout() {
+        if (confirm("确定要退出登录吗？")) {
+          localStorage.removeItem('token'); // 清除 token
+          this.isLoggedIn = false; // 更新登录状态为未登录
+          this.$router.push('/'); // 重定向到首页
+        }
+      },
+    },
+    mounted() {
+      // 检查用户登录状态
+      this.isLoggedIn = !!localStorage.getItem('token'); // 根据 token 是否存在判断登录状态
+    },
   };
 </script>
   
@@ -57,7 +76,7 @@
   }
 
   /* 将登录按钮放到右边 */
-  nav .right {
+  nav .right-nav {
     margin-left: auto;
   }
 
