@@ -1,73 +1,140 @@
 <template>
-  <div class="login-form">
-    <h1>登录</h1>
-    <form @submit.prevent="handleLogin">
-      <div>
-        <label for="username">用户名</label>
-        <input id="username" v-model="credentials.username" required />
-      </div>
-      <div>
-        <label for="password">密码</label>
-        <input type="password" id="password" v-model="credentials.password" required />
-      </div>
-      <div class="button">
-        <button type="submit">登录</button>
+  <div class="login-container">
+    <div class="login-form">
+      <h1>登录</h1>
+      <form @submit.prevent="handleLogin">
+        <div class="form-group">
+          <label for="username">用户名</label>
+          <input id="username" v-model="credentials.username" placeholder="请输入用户名" required />
+        </div>
+        <div class="form-group">
+          <label for="password">密码</label>
+          <input type="password" id="password" v-model="credentials.password" placeholder="请输入密码" required />
+        </div>
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary">登录</button>
+          <button type="button" class="btn btn-secondary" @click="goToRegister">注册</button>
+        </div>
         <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
-      </div>
-    </form>
+      </form>
+    </div>
   </div>
 </template>
-  
+
 <script>
-  import { login } from '../apis/user';
-  
+  import { login } from "../apis/user";
+
   export default {
-    name: 'Login',
+    name: "Login",
     data() {
       return {
         credentials: {
-          username: '',
-          password: '',
+          username: "",
+          password: "",
         },
-        errorMessage: '',
+        errorMessage: "",
       };
     },
     methods: {
       async handleLogin() {
         try {
-          await login(this.credentials); // 调用登录 API
-          this.$router.push('/'); // 登录成功后重定向到首页
+          const response = await login(this.credentials); // 调用登录 API
+          this.$router.push("/"); // 登录成功后重定向到首页
         } catch (error) {
-          this.errorMessage = '登录失败，请检查用户名和密码。';
+          this.errorMessage = "登录失败，请检查用户名和密码。";
         }
+      },
+      goToRegister() {
+        this.$router.push("/register"); // 跳转到注册页面
       },
     },
   };
 </script>
-  
+
 <style scoped>
+  .login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 86vh;  /* 86vh 即 86% 视窗高度 */
+    background-color: #f5f5f5;
+  }
+
+  .login-form {
+    background: #fff;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 400px;
+  }
+
   h1 {
     text-align: center;
+    margin-bottom: 20px;
+    color: #333;
   }
-  .login-form {
-    padding: 20px;
-    max-width: 400px;
-    margin: 0 auto;
+
+  .form-group {
+    margin-bottom: 15px;
   }
-  form {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
+
+  label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #555;
   }
+
   input {
-    width: 100%;
-    padding: 8px;
+    width: 94.5%;  /* 输入框宽度 */
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 6px;  /* 输入框圆角 */
+    font-size: 14px;
   }
-  .button {
+
+  input:focus {
+    border-color: #007bff;
+    outline: none;
+  }
+
+  .form-actions {
     display: flex;
-    justify-content: right;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 20px;
   }
+
+  .btn {
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    font-size: 14px;
+    cursor: pointer;
+  }
+
+  .btn-primary {
+    background-color: #007bff;
+    color: white;
+  }
+
+  .btn-primary:hover {
+    background-color: #0056b3;
+  }
+
+  .btn-secondary {
+    background-color: #6c757d;
+    color: white;
+  }
+
+  .btn-secondary:hover {
+    background-color: #5a6268;
+  }
+
   .error {
     color: red;
+    margin-top: 10px;
+    text-align: center;
   }
 </style>

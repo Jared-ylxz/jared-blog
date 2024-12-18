@@ -6,8 +6,6 @@
         <router-link to="/">文章列表</router-link>
         <router-link to="/articles/new">新增文章</router-link>
         <router-link to="/login" class="right">登录</router-link>
-        <router-link to="/login" class="right">登出</router-link>
-        <router-link to="/login" class="right">注册</router-link>
       </nav>
     </header>
 
@@ -18,7 +16,7 @@
   </div>
 </template>
   
-  <script>
+<script>
   export default {
     name: "App",
   };
@@ -32,15 +30,7 @@
     background-color: #f5f5f5;
     color: #333;
   }
-  
-  #app {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 20px;
-    background-color: #fff;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  }
-  
+
   /* 导航栏样式 */
   header {
     padding: 10px 0;
@@ -48,12 +38,12 @@
     color: white;
     margin-bottom: 20px;
   }
-  
+
   nav {
     display: flex;
     gap: 10px;
   }
-  
+
   nav a {
     color: white;
     text-decoration: none;
@@ -61,15 +51,16 @@
     border-radius: 5px;
     transition: background-color 0.3s;
   }
-  
+
   nav a:hover {
     background-color: #0056b3;
   }
 
+  /* 将登录按钮放到右边 */
   nav .right {
     margin-left: auto;
   }
-  
+
   /* 路由内容区域样式 */
   main {
     padding: 20px;

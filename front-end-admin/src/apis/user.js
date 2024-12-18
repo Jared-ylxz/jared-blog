@@ -5,6 +5,6 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL; // 后端服务地址，
 // 用户登录
 export const login = async (credentials) => {
   const response = await axios.post(`${API_BASE_URL}/users/login/`, credentials);
-  localStorage.setItem('token', response.data.token); // 保存 token
+  localStorage.setItem('token', response.data.token); // 保存 token 到 localStorage
   return response;
 };
