@@ -23,6 +23,10 @@ func Register(ctx *gin.Context) {
 		return
 	}
 	user.Password = hashedPassword
+	user_count := global.DB.First(&user).RowsAffected
+	if user_count == 0 {
+		user.Role = 1
+	}
 
 	if err := global.DB.Create(&user).Error; err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})

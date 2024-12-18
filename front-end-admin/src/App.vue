@@ -1,28 +1,30 @@
 <template>
-    <div id="app">
-      <!-- 页面头部导航栏 -->
-      <header>
-        <nav>
-          <router-link to="/">文章列表</router-link>
-          <router-link to="/articles/new">新增文章</router-link>
-          <router-link to="/login" class="right">登录</router-link>
-        </nav>
-      </header>
-  
-      <!-- 路由出口：显示当前路由对应的页面 -->
-      <main>
-        <router-view />
-      </main>
-    </div>
-  </template>
+  <div id="app">
+    <!-- 页面头部导航栏 -->
+    <header>
+      <nav>
+        <router-link to="/">文章列表</router-link>
+        <router-link to="/articles/new">新增文章</router-link>
+        <router-link to="/login" class="right">登录</router-link>
+        <router-link to="/login" class="right">登出</router-link>
+        <router-link to="/login" class="right">注册</router-link>
+      </nav>
+    </header>
+
+    <!-- 路由出口：显示当前路由对应的页面 -->
+    <main>
+      <router-view />
+    </main>
+  </div>
+</template>
   
   <script>
   export default {
     name: "App",
   };
-  </script>
+</script>
   
-  <style>
+<style scoped>
   /* 全局样式 */
   body {
     margin: 0;
@@ -75,4 +77,4 @@
     border-radius: 5px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   }
-  </style>
+</style>

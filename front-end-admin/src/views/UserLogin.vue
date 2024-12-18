@@ -1,23 +1,25 @@
 <template>
-    <div class="login-form">
-      <h1>登录</h1>
-      <form @submit.prevent="handleLogin">
-        <div>
-          <label for="username">用户名</label>
-          <input id="username" v-model="credentials.username" required />
-        </div>
-        <div>
-          <label for="password">密码</label>
-          <input type="password" id="password" v-model="credentials.password" required />
-        </div>
+  <div class="login-form">
+    <h1>登录</h1>
+    <form @submit.prevent="handleLogin">
+      <div>
+        <label for="username">用户名</label>
+        <input id="username" v-model="credentials.username" required />
+      </div>
+      <div>
+        <label for="password">密码</label>
+        <input type="password" id="password" v-model="credentials.password" required />
+      </div>
+      <div class="button">
         <button type="submit">登录</button>
         <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
-      </form>
-    </div>
-  </template>
+      </div>
+    </form>
+  </div>
+</template>
   
-  <script>
-  import { login } from '../apis/user'; // 假设你有一个用于登录的 API
+<script>
+  import { login } from '../apis/user';
   
   export default {
     name: 'Login',
@@ -41,9 +43,12 @@
       },
     },
   };
-  </script>
+</script>
   
-  <style scoped>
+<style scoped>
+  h1 {
+    text-align: center;
+  }
   .login-form {
     padding: 20px;
     max-width: 400px;
@@ -58,7 +63,11 @@
     width: 100%;
     padding: 8px;
   }
+  .button {
+    display: flex;
+    justify-content: right;
+  }
   .error {
     color: red;
   }
-  </style>
+</style>
