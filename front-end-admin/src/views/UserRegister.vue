@@ -1,23 +1,23 @@
 <template>
-  <div class="login-container">
-    <div class="login-form">
-      <h1>登录</h1>
-      <form @submit.prevent="handleLogin">
+  <div class="register-container">
+    <div class="register-form">
+      <h1>注册</h1>
+      <form @submit.prevent="handleRegister">
         <div class="form-group">
           <label for="username">用户名</label>
-          <input id="username" v-model="credentials.username" placeholder="请输入用户名" required />
+          <input id="username" v-model="data.username" placeholder="请输入用户名" required />
         </div>
         <div class="form-group">
           <label for="password">密码</label>
-          <input type="password" id="password" v-model="credentials.password" placeholder="请输入密码" required />
+          <input type="password" id="password" v-model="data.password" placeholder="请输入密码" required />
         </div>
         <div class="form-group">
           <label for="password">确认密码</label>
-          <input type="password" id="password" v-model="credentials.password" placeholder="请输入密码" required />
+          <input type="password" id="password" v-model="confirmPassword" placeholder="请再次输入密码" required />
         </div>
         <div class="form-actions">
-          <button type="submit" class="btn btn-primary">登录</button>
-          <button type="button" class="btn btn-secondary" @click="goToRegister">注册</button>
+          <button type="submit" class="btn btn-primary">注册</button>
+          <button type="button" class="btn btn-secondary" @click="reset">重置</button>
         </div>
         <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
       </form>
@@ -26,37 +26,41 @@
 </template>
 
 <script>
-  import { login } from "../apis/user";
+  import { register } from "../apis/user";
 
   export default {
-    name: "Login",
+    name: "register",
     data() {
       return {
-        credentials: {
+        data: {
           username: "",
           password: "",
         },
+        confirmPassword: "",
         errorMessage: "",
       };
     },
     methods: {
-      async handleLogin() {
+      async handleRegister() {
         try {
-          const response = await login(this.credentials); // 调用登录 API
+          const response = await register(this.data); // 调用登录 API
           this.$router.push("/"); // 登录成功后重定向到首页
         } catch (error) {
-          this.errorMessage = "登录失败，请检查用户名和密码。";
+          this.errorMessage = "用户名或密码错误！";
         }
       },
-      goToRegister() {
-        this.$router.push("/register"); // 跳转到注册页面
+      reset() {
+        this.data.username = "";
+        this.data.password = "";
+        this.confirmPassword = "";
+        this.errorMessage = "";
       },
     },
   };
 </script>
 
 <style scoped>
-  .login-container {
+  .register-container {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -64,7 +68,7 @@
     background-color: #f5f5f5;
   }
 
-  .login-form {
+  .register-form {
     background: #fff;
     padding: 30px;
     border-radius: 8px;

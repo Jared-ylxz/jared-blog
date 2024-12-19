@@ -8,3 +8,9 @@ export const login = async (credentials) => {
   localStorage.setItem('token', response.data.token); // 保存 token 到 localStorage
   return response;
 };
+
+// 用户注册
+export const register = async (data) => {
+  const response = await axios.post(`${API_BASE_URL}/users/register/`, data);
+  return response;
+};
