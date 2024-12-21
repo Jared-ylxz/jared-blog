@@ -23,6 +23,7 @@
 
 <script>
   import { login } from "../apis/user";
+  import { mapActions } from "vuex";
 
   export default {
     name: "Login",
@@ -36,9 +37,13 @@
       };
     },
     methods: {
+      ...mapActions(["login"]), // 映射 Vuex 的 login action 到当前组件的 methods 中
       async handleLogin() {
         try {
           const response = await login(this.credentials); // 调用登录 API
+          this.$router.push("/"); // 登录成功后重定向到首页
+          // 更新 isLoggedIn 状态
+          this.login(); // 调用 Vuex 的 login action 更新状态
           this.$router.push("/"); // 登录成功后重定向到首页
         } catch (error) {
           this.errorMessage = "登录失败，请检查用户名和密码。";

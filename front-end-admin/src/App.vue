@@ -17,27 +17,25 @@
   </div>
 </template>
   
-<script>
-  export default {
-    name: "App",
-    data() {
-      return {
-        isLoggedIn: false, // 这里可以根据实际情况进行更新
-      };
-    },
-    methods: {
-      confirmLogout() {
-        if (confirm("确定要退出登录吗？")) {
-          localStorage.removeItem('token'); // 清除 token
-          this.isLoggedIn = false; // 更新登录状态为未登录
-          this.$router.push('/'); // 重定向到首页
-        }
-      },
-    },
-    mounted() {
-      // 检查用户登录状态
-      this.isLoggedIn = !!localStorage.getItem('token'); // 根据 token 是否存在判断登录状态
-    },
+<script setup>
+  import { useStore } from "vuex";
+  import { useRouter } from "vue-router";
+  import { computed } from "vue";
+
+  // 获取 Vuex store 和 Vue Router 实例
+  const store = useStore();
+  const router = useRouter();
+
+  // 映射 Vuex 的 isLoggedIn 状态
+  const isLoggedIn = computed(() => store.state.isLoggedIn);
+
+  // 定义登出方法
+  const confirmLogout = () => {
+    if (confirm("确定要退出登录吗？")) {
+      localStorage.removeItem("token"); // 清除 token
+      store.dispatch("logout"); // 调用 Vuex 的 logout action 更新状态
+      router.push("/"); // 重定向到首页
+    }
   };
 </script>
   
