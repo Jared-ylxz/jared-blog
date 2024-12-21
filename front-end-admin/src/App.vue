@@ -4,7 +4,6 @@
     <header>
       <nav>
         <router-link to="/">文章列表</router-link>
-        <router-link to="/articles/new">新增文章</router-link>
         <router-link class="right-nav" v-if="!isLoggedIn" to="/login">登录</router-link>
         <a class="right-nav" v-else @click="confirmLogout">登出</a>
       </nav>

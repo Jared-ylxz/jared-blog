@@ -2,7 +2,8 @@
   <div class="article-list">
     <h1>文章管理</h1>
     <router-link to="/articles/new">
-      <button class="create-article">新增文章</button>
+      <button class="create-article" :class="{ disabled: !isAdmin }"
+          :disabled="!isAdmin">新增文章</button>
     </router-link>
     <table>
       <thead>
@@ -80,7 +81,7 @@
     cursor: pointer;
   }
 
-  .create-article:hover {
+  .create-article:hover:not(.disabled) {  /* 鼠标悬停且非禁用状态时 */
     background-color: #0056b3;
   }
 
@@ -112,8 +113,8 @@
   }
 
   button.disabled {
-    background-color: #ccc;
-    cursor: not-allowed;
+    background-color: #ccc; /* 灰色背景 */
+    cursor: not-allowed; /* 禁用状态的光标 */
   }
 
   .delete-button {
