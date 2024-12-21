@@ -21,38 +21,33 @@
   </div>
 </template>
 
-<script>
-  import { login } from "../apis/user";
-  import { mapActions } from "vuex";
+<script setup>
+  import { ref } from 'vue';
+  import { useRouter } from 'vue-router';
+  import { useStore } from 'vuex';
+  import { login as loginApi } from '../apis/user';
 
-  export default {
-    name: "Login",
-    data() {
-      return {
-        credentials: {
-          username: "",
-          password: "",
-        },
-        errorMessage: "",
-      };
-    },
-    methods: {
-      ...mapActions(["login"]), // 映射 Vuex 的 login action 到当前组件的 methods 中
-      async handleLogin() {
-        try {
-          const response = await login(this.credentials); // 调用登录 API
-          this.$router.push("/"); // 登录成功后重定向到首页
-          // 更新 isLoggedIn 状态
-          this.login(); // 调用 Vuex 的 login action 更新状态
-          this.$router.push("/"); // 登录成功后重定向到首页
-        } catch (error) {
-          this.errorMessage = "登录失败，请检查用户名和密码。";
-        }
-      },
-      goToRegister() {
-        this.$router.push("/register"); // 跳转到注册页面
-      },
-    },
+  const router = useRouter();
+  const store = useStore();
+
+  const credentials = ref({
+    username: '',
+    password: '',
+  });
+  const errorMessage = ref('');
+
+  const handleLogin = async () => {
+    try {
+      const response = await loginApi(credentials.value); // 调用登录 API
+      store.dispatch('login', response.data.role); // 更新 Vuex 中的登录状态和用户角色
+      router.push('/'); // 登录成功后重定向到首页
+    } catch (error) {
+      errorMessage.value = '登录失败，请检查用户名和密码。';
+    }
+  };
+
+  const goToRegister = () => {
+    router.push('/register'); // 跳转到注册页面
   };
 </script>
 
