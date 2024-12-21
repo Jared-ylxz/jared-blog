@@ -11,13 +11,15 @@ type Claims struct {
 	jwt.MapClaims
 	UserID   uint   `json:"user_id"`
 	Username string `json:"username"`
+	Role     uint8  `json:"role"`
 	Expires  int64  `json:"exp"`
 }
 
-func GenerateToken(userID uint, username string) (string, error) {
+func GenerateToken(userID uint, username string, role uint8) (string, error) {
 	claims := &Claims{
 		UserID:   userID,
 		Username: username,
+		Role:     role,
 		Expires:  time.Now().Add(time.Hour * 24).Unix(),
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
