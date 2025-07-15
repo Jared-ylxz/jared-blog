@@ -11,11 +11,11 @@ type Claims struct {
 	jwt.MapClaims
 	UserID   uint   `json:"user_id"`
 	Username string `json:"username"`
-	Role     uint8  `json:"role"`
+	Role     string  `json:"role"`
 	Expires  int64  `json:"exp"`
 }
 
-func GenerateToken(userID uint, username string, role uint8) (string, error) {
+func GenerateToken(userID uint, username string, role string) (string, error) {
 	claims := &Claims{
 		UserID:   userID,
 		Username: username,

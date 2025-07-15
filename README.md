@@ -1,3 +1,7 @@
+# todo role改is_superuser，用AI改后端，用postman测用户注册。
+
+
+
 # jaredBlog
 This is my blog. It's built with Go and Vue.
 
@@ -28,17 +32,27 @@ npm install vue-router
 npm install axios
 
 
-# 启动项目：
+# 启动项目
+
+1.开发环境
 cd <my-project-folder>
 cd back-end
-开发环境：RUNNING_ENV=development go run main.go
-生产环境：RUNNING_ENV=production go run main.go
+RUNNING_ENV=development go run main.go
 cd ../front-end-client
-开发环境：npm run dev  # 会加载 .env.development 文件
-生产环境：npm run build  # 会加载 .env.production 文件
+npm run dev  # 会加载 .env.development 文件
 cd ../front-end-admin
-开发环境：npm run dev  # 会加载 .env.development 文件
-生产环境：npm run build  # 会加载 .env.production 文件
+npm run dev  # 会加载 .env.development 文件
+
+2.生产环境
+cd <my-project-folder>
+cd back-end
+RUNNING_ENV=production go run main.go
+cd ../front-end-client
+npm run build  # 会加载 .env.production 文件
+cd ../front-end-admin
+npm run build  # 会加载 .env.production 文件
+vim create_admin_user.go  # 编辑管理员的账号密码
+go run create_admin_user.go  # 创建超级管理员
 
 
 # TODO
