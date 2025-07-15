@@ -44,7 +44,7 @@
   const articles = ref([]);
 
   // 计算属性判断用户是否为管理员
-  const isAdmin = computed(() => store.state.user.role === 9);
+  const isAdmin = computed(() => store.state.user.role === 'admin');
 
   const loadArticles = async () => {
     const response = await fetchArticles();

@@ -1,7 +1,3 @@
-# todo role改is_superuser，用AI改后端，用postman测用户注册。
-
-
-
 # jaredBlog
 This is my blog. It's built with Go and Vue.
 
