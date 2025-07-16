@@ -1,9 +1,13 @@
 # jaredBlog
+
 This is my blog. It's built with Go and Vue.
 
 
+
 # 创建项目过程的简单记录
+
 1.创建后端项目：
+...
 
 2.创建前端前台项目：
 cd <my-project-folder>
@@ -28,6 +32,7 @@ npm install vue-router
 npm install axios
 
 
+
 # 启动项目
 
 1.开发环境
@@ -42,16 +47,17 @@ npm run dev  # 会加载 .env.development 文件
 2.生产环境
 cd <my-project-folder>
 cd back-end
-RUNNING_ENV=production go run main.go
+RUNNING_ENV=production export GIN_MODE=release go run main.go
+vim create_admin_user.go  # 编辑管理员的账号密码
+go run ./cmd/create_admin_user.go -username=Jared -password=12345  # 创建超级管理员
 cd ../front-end-client
 npm run build  # 会加载 .env.production 文件
 cd ../front-end-admin
 npm run build  # 会加载 .env.production 文件
-vim create_admin_user.go  # 编辑管理员的账号密码
-go run create_admin_user.go  # 创建超级管理员
 
 
 # TODO
+
 <!-- 前端添加文章发布功能
 前端添加注册、登录功能
 文章发布时，前后端校验是否已登录
